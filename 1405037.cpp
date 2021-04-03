@@ -6,6 +6,7 @@
 using namespace std;
 
 queue<char> production_queue;
+int queue_size = 0;
 
 void MakeChefXWork ();
 void MakeChefYWork ();
@@ -18,28 +19,31 @@ int main () {
 	chef_x_thread.join();
 	chef_y_thread.join();
 
-	//ShowQueue(production_queue);
+	ShowQueue(production_queue);
+	cout << "\nQueue size: " << queue_size << endl;
 
 	return 0;
 }
 
 void MakeChefXWork () {
-	for (int i=0; i<100; i++) {
-		//production_queue.push('-');
+	for (int i=0; i<200; i++) {
+		production_queue.push('-');
+		queue_size++;
 		cout << "-";
 	}
 }
 
 void MakeChefYWork () {
-	for (int i=0; i<100; i++) {
-		//production_queue.push('v');
+	for (int i=0; i<200; i++) {
+		production_queue.push('v');
 		cout << "v";
+		queue_size++;
 	}
 }
 
 void ShowQueue(queue<char> a_queue) {
 	queue<char> the_queue = a_queue;
-	cout << "Front";
+	cout << "\nFront";
 	while (!the_queue.empty()) {
 		cout << ' ' << the_queue.front();
 		the_queue.pop();
