@@ -1,31 +1,28 @@
 #include <iostream>
 #include <cstdio>
+#include <thread>
 #include <pthread.h>
 
 using namespace std;
 
-#define NUM_THREADS 5
-
-void *PrintHello(void *threadid) {
-	long tid;
-	tid = (long)threadid;
-	cout << "Hello Jude! Thread ID, " << tid << endl;
-	pthread_exit(NULL);
+void foo (int x) {
+	for (int i=0; i<100; i++) {
+		cout << "Executing thread " << x << endl;
+	}
 }
 
 int main () {
-	pthread_t threads[NUM_THREADS];
-	int rc;
-	int i;
+	thread thread_1(foo, 1);
+	thread thread_2(foo, 2);
+	thread thread_3(foo, 3);
+	thread thread_4(foo, 4);
+	thread thread_5(foo, 5);
 
-	for( i = 0; i < NUM_THREADS; i++ ) {
-		cout << "main() : creating thread, " << i << endl;
-		rc = pthread_create(&threads[i], NULL, PrintHello, (void *)(intptr_t)i);
+	thread_1.join();
+	thread_2.join();
+	thread_3.join();
+	thread_4.join();
+	thread_5.join();
 
-		if (rc) {
-			cout << "Error:unable to create thread," << rc << endl;
-			exit(-1);
-		}
-	}
-	pthread_exit(NULL);
+	return 0;
 }
