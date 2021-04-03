@@ -1,28 +1,49 @@
 #include <iostream>
 #include <cstdio>
 #include <thread>
-#include <pthread.h>
+#include <queue>
 
 using namespace std;
 
-void foo (int x) {
+queue<char> production_queue;
+
+void MakeChefXWork ();
+void MakeChefYWork ();
+void ShowQueue(queue<char> a_queue);
+
+int main () {
+	thread chef_x_thread(MakeChefXWork);
+	thread chef_y_thread(MakeChefYWork);
+
+	chef_x_thread.join();
+	chef_y_thread.join();
+
+	//ShowQueue(production_queue);
+
+	return 0;
+}
+
+void MakeChefXWork () {
 	for (int i=0; i<100; i++) {
-		cout << "Executing thread " << x << endl;
+		//production_queue.push('-');
+		cout << "-";
 	}
 }
 
-int main () {
-	thread thread_1(foo, 1);
-	thread thread_2(foo, 2);
-	thread thread_3(foo, 3);
-	thread thread_4(foo, 4);
-	thread thread_5(foo, 5);
+void MakeChefYWork () {
+	for (int i=0; i<100; i++) {
+		//production_queue.push('v');
+		cout << "v";
+	}
+}
 
-	thread_1.join();
-	thread_2.join();
-	thread_3.join();
-	thread_4.join();
-	thread_5.join();
-
-	return 0;
+void ShowQueue(queue<char> a_queue) {
+	queue<char> the_queue = a_queue;
+	cout << "Front";
+	while (!the_queue.empty()) {
+		cout << ' ' << the_queue.front();
+		the_queue.pop();
+	}
+	cout << "End";
+	cout << '\n';
 }
