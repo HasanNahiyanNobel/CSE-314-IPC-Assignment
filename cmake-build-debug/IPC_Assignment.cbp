@@ -85,6 +85,9 @@
 		<Unit filename="/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/1405037.cpp">
 			<Option target="IPC_Assignment"/>
 		</Unit>
+		<Unit filename="/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/Semaphore.h">
+			<Option target="IPC_Assignment"/>
+		</Unit>
 		<Unit filename="/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
