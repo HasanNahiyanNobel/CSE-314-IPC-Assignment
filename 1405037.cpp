@@ -9,7 +9,7 @@ using namespace std;
 void *PrintHello(void *threadid) {
 	long tid;
 	tid = (long)threadid;
-	cout << "Hello World! Thread ID, " << tid << endl;
+	cout << "Hello Jude! Thread ID, " << tid << endl;
 	pthread_exit(NULL);
 }
 
