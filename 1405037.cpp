@@ -7,9 +7,11 @@
 using namespace std;
 
 /// Constants
-const int kProductionQueueSize = 200;
+const int kProductionQueueSize = 5;
 const char kChocolateCakeChar = 'c';
 const char kVanillaCakeChar = '-';
+const bool kIsMutexLockOn = true; // For debug purposes
+const bool kShouldWaitForCharInputBeforeEveryOutputLine = false; // For debug purposes
 
 /// Global variables
 queue<char> production_queue;
@@ -32,7 +34,7 @@ int main () {
 	pthread_join(chef_x_thread, NULL);
 	pthread_join(chef_y_thread, NULL);
 
-	cout << "\nQueue size: " << queue_size << endl;
+	cout << "Queue size: " << queue_size << endl;
 
 	return 0;
 }
@@ -40,37 +42,48 @@ int main () {
 /// Function Definitions
 void * MakeChefXWork (void *pVoid) {
 	for (int i=0; i < kProductionQueueSize; i++) {
-		pthread_mutex_lock(&mutex);
+		if (kIsMutexLockOn) pthread_mutex_lock(&mutex);
 		// Critical section starts
 		production_queue.push(kChocolateCakeChar);
 		queue_size++;
+		for (int j=0; j<5000; j++) {queue_size++;queue_size--;} // To get a clearer view of race condition
+		cout << "New cake by ChefX; production_queue: ";
+		ShowQueue(production_queue);
+		cout << endl;
 		// Critical section ends
-		pthread_mutex_unlock(&mutex);
-
-		cout << kChocolateCakeChar;
+		if (kIsMutexLockOn) pthread_mutex_unlock(&mutex);
+		if (kShouldWaitForCharInputBeforeEveryOutputLine) getchar(); // Pause and wait for an "Enter" press
 	}
 	return nullptr;
 }
 
 void * MakeChefYWork (void *pVoid) {
 	for (int i=0; i < kProductionQueueSize; i++) {
-		pthread_mutex_lock(&mutex);
+		if (kIsMutexLockOn) pthread_mutex_lock(&mutex);
 		// Critical section starts
 		production_queue.push(kVanillaCakeChar);
-		cout << kVanillaCakeChar;
 		queue_size++;
+		for (int j=0; j<5000; j++) {queue_size++;queue_size--;} // To get a clearer view of race condition
+		cout << "New cake by ChefY; production_queue: ";
+		ShowQueue(production_queue);
+		cout << endl;
 		// Critical section ends
-		pthread_mutex_unlock(&mutex);
+		if (kIsMutexLockOn) pthread_mutex_unlock(&mutex);
+		if (kShouldWaitForCharInputBeforeEveryOutputLine) getchar(); // Pause and wait for an "Enter" press
 	}
 	return nullptr;
 }
 
 void ShowQueue (queue<char> a_queue) {
 	queue<char> the_queue = a_queue;
-	cout << "Front-> ";
+
+	//Output the first element, without a preceding space
+	cout << the_queue.front();
+	the_queue.pop();
+
+	//Output the rest
 	while (!the_queue.empty()) {
-		cout << the_queue.front();
+		cout << ' ' << the_queue.front();
 		the_queue.pop();
 	}
-	cout << " ->End\n";
 }
