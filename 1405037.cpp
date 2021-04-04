@@ -1,138 +1,82 @@
-#include <iostream>
-#include <cstdio>
-#include <pthread.h>
-#include <chrono>
-#include <queue>
-#include <thread>
-
-/// Namespace
+#include<stdio.h>
+#include<pthread.h>
+#include<semaphore.h>
+#include<queue>
 using namespace std;
-using namespace chrono;
 
-/// Constants
-const int kProductionQueueSize = 50;
-const char kChocolateCakeChar = 'c';
-const char kVanillaCakeChar = '-';
-const bool kIsMutexLockOn = true; // For debug purposes
-const int kSleepingTimeAfterEachConsoleOutput = 0; // In milliseconds
-const int kExecutionTimeLimit = 10000; // In milliseconds, though execution will continue if a thread has called GetExecutionTime() before reaching that time limit.
 
-/// Global variables
-queue<char> production_queue;
-int queue_size = 0;
-pthread_mutex_t mutex;
-auto start = high_resolution_clock::now();
+//semaphore to control sleep and wake up
+sem_t empty;
+sem_t full;
+queue<int> q;
+pthread_mutex_t lock;
 
-/// Function declarations
-void * MakeChefXWork(void *pVoid);
-void * MakeChefYWork(void *pVoid);
-void * MakeChefZWork(void *pVoid);
-void ShowQueue(queue<char> a_queue);
-void SleepABit(int sleeping_time);
-int GetExecutionTime();
 
-/// Main function
-int main () {
-	pthread_t chef_x_thread;
-	pthread_t chef_y_thread;
-	pthread_t chef_z_thread;
+void init_semaphore()
+{
+	sem_init(&empty,0,5);
+	sem_init(&full,0,0);
+	pthread_mutex_init(&lock,0);
+}
 
-	pthread_create(&chef_x_thread, nullptr, MakeChefXWork, nullptr);
-	pthread_create(&chef_y_thread, nullptr, MakeChefYWork, nullptr);
-	pthread_create(&chef_z_thread, nullptr, MakeChefZWork, nullptr);
+void * ProducerFunc(void * arg)
+{
+	printf("%s\n",(char*)arg);
+	int i;
+	for(i=1;i<=10;i++)
+	{
+		sem_wait(&empty);
 
-	pthread_join(chef_x_thread, nullptr);
-	pthread_join(chef_y_thread, nullptr);
-	pthread_join(chef_z_thread, nullptr);
+		pthread_mutex_lock(&lock);
+		//sleep(1);
+		q.push(i);
+		printf("producer produced item %d\n",i);
 
-	cout << "Queue size: " << queue_size << endl;
-	cout << "Execution ended in: " << GetExecutionTime() << "ms" << endl;
+		pthread_mutex_unlock(&lock);
 
+		sem_post(&full);
+	}
+}
+
+void * ConsumerFunc(void * arg)
+{
+	printf("%s\n",(char*)arg);
+	int i;
+	for(i=1;i<=10;i++)
+	{
+		sem_wait(&full);
+
+		pthread_mutex_lock(&lock);
+
+		//sleep(1);
+		int item = q.front();
+		q.pop();
+		printf("consumer consumed item %d\n",item);
+
+		pthread_mutex_unlock(&lock);
+
+		sem_post(&empty);
+	}
+}
+
+
+
+
+
+int main()
+{
+	pthread_t thread1;
+	pthread_t thread2;
+
+	init_semaphore();
+
+	char * message1 = "i am producer";
+	char * message2 = "i am consumer";
+
+	pthread_create(&thread1,NULL,ProducerFunc,(void*)message1 );
+	pthread_create(&thread2,NULL,ConsumerFunc,(void*)message2 );
+
+
+	while(1);
 	return 0;
-}
-
-/// Function Definitions
-void * MakeChefXWork (void *pVoid) {
-	while (GetExecutionTime() < kExecutionTimeLimit) {
-		if (kIsMutexLockOn) pthread_mutex_lock(&mutex); // Critical section starts
-		if (production_queue.size() < kProductionQueueSize) {
-			production_queue.push(kChocolateCakeChar);
-			queue_size++;
-
-			for (int j=0; j<5000; j++) {queue_size++;queue_size--;} // To get a clearer view of race condition
-
-			cout << "New cake by Chef X; production_queue:\t";
-			ShowQueue(production_queue);
-			cout << endl;
-			SleepABit(kSleepingTimeAfterEachConsoleOutput);
-		}
-		if (kIsMutexLockOn) pthread_mutex_unlock(&mutex); // Critical section ends
-	}
-	return nullptr;
-}
-
-void * MakeChefYWork (void *pVoid) {
-	while (GetExecutionTime() < kExecutionTimeLimit) {
-		if (kIsMutexLockOn) pthread_mutex_lock(&mutex); // Critical section starts
-		if (production_queue.size() < kProductionQueueSize) {
-			production_queue.push(kVanillaCakeChar);
-			queue_size++;
-
-			for (int j=0; j<5000; j++) {queue_size++;queue_size--;} // To get a clearer view of race condition
-
-			cout << "New cake by Chef Y; production_queue:\t";
-			ShowQueue(production_queue);
-			cout << endl;
-			SleepABit(kSleepingTimeAfterEachConsoleOutput);
-		}
-		if (kIsMutexLockOn) pthread_mutex_unlock(&mutex); // Critical section ends
-	}
-	return nullptr;
-}
-
-void * MakeChefZWork (void *pVoid) {
-	while (GetExecutionTime() < kExecutionTimeLimit) {
-		if (kIsMutexLockOn) pthread_mutex_lock(&mutex); // Critical section starts
-		if (production_queue.size() > 0) {
-			char a_cake = production_queue.front();
-			production_queue.pop();
-			queue_size--;
-
-			for (int j=0; j<5000; j++) {queue_size++;queue_size--;} // To get a clearer view of race condition
-
-			cout << "Cake taken by Chef Z; production_queue:\t";
-			ShowQueue(production_queue);
-			cout << endl;
-			SleepABit(kSleepingTimeAfterEachConsoleOutput);
-		}
-		if (kIsMutexLockOn) pthread_mutex_unlock(&mutex); // Critical section ends
-	}
-	return nullptr;
-}
-
-void ShowQueue (queue<char> a_queue) {
-	if (a_queue.size()==0) {
-		return;
-	}
-	queue<char> the_queue = a_queue;
-
-	//Output the first element, without a preceding space
-	cout << the_queue.front();
-	the_queue.pop();
-
-	//Output the rest
-	while (!the_queue.empty()) {
-		cout << ' ' << the_queue.front();
-		the_queue.pop();
-	}
-}
-
-void SleepABit (int sleeping_time) {
-	this_thread::sleep_for(milliseconds{sleeping_time});
-}
-
-int GetExecutionTime () {
-	auto now = chrono::high_resolution_clock::now();
-	auto duration = duration_cast<milliseconds>(now - start);
-	return duration.count();
 }
