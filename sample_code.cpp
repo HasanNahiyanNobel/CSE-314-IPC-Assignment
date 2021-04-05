@@ -3,6 +3,7 @@
 #include<semaphore.h>
 #include<queue>
 #include <unistd.h>
+#include <iostream>
 
 
 /// Namespace
@@ -13,7 +14,7 @@ using namespace std;
 const int kProductionQueueSize = 5;
 const int kNumberOfProductions = 10;
 const char kChocolateCakeChar = 'c';
-const char kVanillaCakeChar = '-'; //TODO Change this to 'v'
+const char kVanillaCakeChar = 'v';
 const int kSleepingTimeAfterEachConsoleOutput = 1; // In seconds
 const int kExecutionTimeLimit = 2000; // In milliseconds, though execution will continue if a thread has called GetExecutionTime() before reaching that time limit.
 
@@ -22,7 +23,7 @@ const int kExecutionTimeLimit = 2000; // In milliseconds, though execution will 
 sem_t empty;
 sem_t full;
 pthread_mutex_t pthreadMutex;
-queue<int> production_queue;
+queue<char> production_queue;
 
 
 /// Function definitions
@@ -63,8 +64,9 @@ void* StartChefX (void* pVoid) {
 		pthread_mutex_lock(&pthreadMutex);
 
 		sleep(kSleepingTimeAfterEachConsoleOutput);
-		production_queue.push(i);
-		printf("Chef X produced item %d\n",i);
+		production_queue.push(kChocolateCakeChar);
+		cout << "Chef X produced a cake; queue size: " << production_queue.size() << endl;
+		//printf("Chef X produced item %d\n",i);
 
 		pthread_mutex_unlock(&pthreadMutex);
 		sem_post(&full);
@@ -79,8 +81,9 @@ void* StartChefY (void* pVoid) {
 		pthread_mutex_lock(&pthreadMutex);
 
 		sleep(kSleepingTimeAfterEachConsoleOutput);
-		production_queue.push(i);
-		printf("Chef Y produced item %d\n",i);
+		production_queue.push(kVanillaCakeChar);
+		cout << "Chef Y produced a cake; queue size: " << production_queue.size() << endl;
+		//printf("Chef Y produced item %d\n",i);
 
 		pthread_mutex_unlock(&pthreadMutex);
 		sem_post(&full);
@@ -95,9 +98,15 @@ void* StartChefZ (void* pVoid) {
 		pthread_mutex_lock(&pthreadMutex);
 
 		sleep(kSleepingTimeAfterEachConsoleOutput);
-		int item = production_queue.front();
+		char cake = production_queue.front();
 		production_queue.pop();
-		printf("Chef Z consumed item %d\n",item);
+		if (cake==kChocolateCakeChar) {
+			cout << "Chef Z took a *chocolate* cake; queue size: " << production_queue.size() << endl;
+		}
+		else {
+			cout << "Chef Z took a *vanilla* cake; queue size: " << production_queue.size() << endl;
+		}
+		//printf("Chef Z consumed cake %d\n", cake);
 
 		pthread_mutex_unlock(&pthreadMutex);
 		sem_post(&empty);
