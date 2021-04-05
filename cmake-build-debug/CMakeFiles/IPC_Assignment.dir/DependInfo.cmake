@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/1405037.cpp" "/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/cmake-build-debug/CMakeFiles/IPC_Assignment.dir/1405037.cpp.o"
   "/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/Sample Code.cpp" "/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/cmake-build-debug/CMakeFiles/IPC_Assignment.dir/Sample_Code.cpp.o"
+  "/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/sample_code.cpp" "/media/nobel/A2A812DEA812B131/Users/User/Google Drive/4-1 (January, 2021)/CSE 314 Operating System Sessional/2. IPC/IPC Assignment/cmake-build-debug/CMakeFiles/IPC_Assignment.dir/sample_code.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
