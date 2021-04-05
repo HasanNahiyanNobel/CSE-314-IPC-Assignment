@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/IPC_Assignment.dir/1405037.cpp.o CMakeFiles/IPC_Assignment.dir/Sample_Code.cpp.o CMakeFiles/IPC_Assignment.dir/sample_code.cpp.o  -o IPC_Assignment 
+/usr/bin/c++  -g   CMakeFiles/IPC_Assignment.dir/1405037.cpp.o CMakeFiles/IPC_Assignment.dir/sample_code.cpp.o  -o IPC_Assignment 

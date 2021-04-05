@@ -16,7 +16,7 @@ const char kChocolateCakeChar = 'c';
 const char kVanillaCakeChar = '-'; //TODO Change this to 'v'
 const bool kIsMutexLockOn = true; // For debug purposes
 const int kSleepingTimeAfterEachConsoleOutput = 0; // In milliseconds
-const int kExecutionTimeLimit = 2000; // In milliseconds, though execution will continue if a thread has called GetExecutionTime() before reaching that time limit.
+const int kApproximatedExecutionTimeLimit = 2000; // In milliseconds, though execution will continue if a thread has called GetExecutionTime() before reaching that time limit.
 
 /// Global variables
 sem_t empty, full;
@@ -64,7 +64,7 @@ void InitializeSemaphores () {
 }
 
 void * MakeChefXWork (void *pVoid) {
-	while (GetExecutionTime() < kExecutionTimeLimit) {
+	while (GetExecutionTime() < kApproximatedExecutionTimeLimit) {
 		sem_wait(&empty);
 		pthread_mutex_lock(&mutex);
 		// Critical section starts
@@ -87,7 +87,7 @@ void * MakeChefXWork (void *pVoid) {
 }
 
 void * MakeChefYWork (void *pVoid) {
-	while (GetExecutionTime() < kExecutionTimeLimit) {
+	while (GetExecutionTime() < kApproximatedExecutionTimeLimit) {
 		sem_wait(&empty);
 		pthread_mutex_lock(&mutex);
 		// Critical section starts
@@ -110,7 +110,7 @@ void * MakeChefYWork (void *pVoid) {
 }
 
 void * MakeChefZWork (void *pVoid) {
-	while (GetExecutionTime() < kExecutionTimeLimit) {
+	while (GetExecutionTime() < kApproximatedExecutionTimeLimit) {
 		sem_wait(&full);
 		pthread_mutex_lock(&mutex);
 		// Critical section starts

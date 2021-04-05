@@ -4,10 +4,12 @@
 #include<queue>
 #include <unistd.h>
 #include <iostream>
+#include <chrono>
 
 
 /// Namespace
 using namespace std;
+using namespace chrono;
 
 
 /// Constants
@@ -16,7 +18,8 @@ const int kNumberOfProductions = 10;
 const char kChocolateCakeChar = 'c';
 const char kVanillaCakeChar = 'v';
 const int kSleepingTimeAfterEachConsoleOutput = 1; // In seconds
-const int kExecutionTimeLimit = 2000; // In milliseconds, though execution will continue if a thread has called GetExecutionTime() before reaching that time limit.
+const int kApproximatedExecutionTimeLimit = 30; // In seconds, though execution will continue if a thread has called GetExecutionTime() before reaching that time limit. Numerically if there are n threads, execution seems to continue (n-1) seconds more.
+auto kStartTime = high_resolution_clock::now();
 
 
 /// Global variables
@@ -31,6 +34,7 @@ void InitSemaphore();
 void* StartChefX(void* pVoid);
 void* StartChefY(void* pVoid);
 void* StartChefZ(void* pVoid);
+int GetExecutionTime();
 
 
 ///Main Function
@@ -45,7 +49,14 @@ int main() {
 	pthread_create(&thread_chef_y, nullptr, StartChefY, nullptr);
 	pthread_create(&thread_chef_z, nullptr, StartChefZ, nullptr);
 
-	while(1);
+	pthread_join(thread_chef_x, nullptr);
+	pthread_join(thread_chef_y, nullptr);
+	pthread_join(thread_chef_z, nullptr);
+
+	//while(1);
+
+	cout << "Execution ended in: " << GetExecutionTime() << "s" << endl;
+
 	return 0;
 }
 
@@ -59,7 +70,7 @@ void InitSemaphore () {
 
 void* StartChefX (void* pVoid) {
 	int i;
-	for(i=0; i<kNumberOfProductions; i++) {
+	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
 		sem_wait(&empty);
 		pthread_mutex_lock(&pthreadMutex);
 
@@ -76,7 +87,7 @@ void* StartChefX (void* pVoid) {
 
 void* StartChefY (void* pVoid) {
 	int i;
-	for(i=0; i<kNumberOfProductions; i++) {
+	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
 		sem_wait(&empty);
 		pthread_mutex_lock(&pthreadMutex);
 
@@ -93,7 +104,7 @@ void* StartChefY (void* pVoid) {
 
 void* StartChefZ (void* pVoid) {
 	int i;
-	for(i=0; i<kNumberOfProductions; i++) {
+	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
 		sem_wait(&full);
 		pthread_mutex_lock(&pthreadMutex);
 
@@ -112,4 +123,13 @@ void* StartChefZ (void* pVoid) {
 		sem_post(&empty);
 	}
 	return nullptr;
+}
+
+/**
+ * @return Execution time in seconds
+ */
+int GetExecutionTime () {
+	auto now = chrono::high_resolution_clock::now();
+	auto duration = duration_cast<seconds>(now - kStartTime);
+	return duration.count();
 }
