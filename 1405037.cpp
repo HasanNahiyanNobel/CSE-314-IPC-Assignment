@@ -46,6 +46,8 @@ void InitSemaphore();
 void* StartChefX(void* pVoid);
 void* StartChefY(void* pVoid);
 void* StartChefZ(void* pVoid);
+void* StartWaiter1(void* pVoid);
+void* StartWaiter2(void* pVoid);
 void PrintQueue(queue<char> the_queue, const string& name, int max_size);
 void PrintAllQueues();
 int GetExecutionTime();
@@ -187,6 +189,46 @@ void* StartChefZ (void* pVoid) {
 			pthread_mutex_unlock(&mutex_vanilla_queue);
 			sem_post(&full_vanilla_queue);
 		}
+	}
+	return nullptr;
+}
+
+void* StartWaiter1 (void* pVoid) {
+	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
+		sem_wait(&full_chocolate_queue);
+		pthread_mutex_lock(&mutex_chocolate_queue);
+
+		pthread_mutex_lock(&mutex_print);
+
+		chocolate_queue.pop();
+		cout << "Waiter 1 took a *chocolate* cake." << endl;
+		PrintAllQueues();
+		sleep(kSleepingTimeAfterEachConsoleOutput);
+
+		pthread_mutex_unlock(&mutex_print);
+
+		pthread_mutex_unlock(&mutex_chocolate_queue);
+		sem_post(&empty_chocolate_queue);
+	}
+	return nullptr;
+}
+
+void* StartWaiter2 (void* pVoid) {
+	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
+		sem_wait(&full_vanilla_queue);
+		pthread_mutex_lock(&mutex_vanilla_queue);
+
+		pthread_mutex_lock(&mutex_print);
+
+		vanilla_queue.pop();
+		cout << "Waiter 2 took a *vanilla* cake." << endl;
+		PrintAllQueues();
+		sleep(kSleepingTimeAfterEachConsoleOutput);
+
+		pthread_mutex_unlock(&mutex_print);
+
+		pthread_mutex_unlock(&mutex_vanilla_queue);
+		sem_post(&empty_vanilla_queue);
 	}
 	return nullptr;
 }
