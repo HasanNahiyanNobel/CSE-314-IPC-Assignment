@@ -71,16 +71,22 @@ void InitSemaphore () {
 void* StartChefX (void* pVoid) {
 	int i;
 	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
+		cout << "X1\n";
 		sem_wait(&empty);
+		cout << "X2\n";
 		pthread_mutex_lock(&pthreadMutex);
+		cout << "X3\n";
 
 		sleep(kSleepingTimeAfterEachConsoleOutput);
 		production_queue.push(kChocolateCakeChar);
 		cout << "Chef X produced a cake; queue size: " << production_queue.size() << endl;
 		//printf("Chef X produced item %d\n",i);
 
+		cout << "X4\n";
 		pthread_mutex_unlock(&pthreadMutex);
+		cout << "X5\n";
 		sem_post(&full);
+		cout << "X6\n";
 	}
 	return nullptr;
 }
@@ -88,16 +94,22 @@ void* StartChefX (void* pVoid) {
 void* StartChefY (void* pVoid) {
 	int i;
 	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
+		cout << "Y1\n";
 		sem_wait(&empty);
+		cout << "Y2\n";
 		pthread_mutex_lock(&pthreadMutex);
+		cout << "Y3\n";
 
 		sleep(kSleepingTimeAfterEachConsoleOutput);
 		production_queue.push(kVanillaCakeChar);
 		cout << "Chef Y produced a cake; queue size: " << production_queue.size() << endl;
 		//printf("Chef Y produced item %d\n",i);
 
+		cout << "Y4\n";
 		pthread_mutex_unlock(&pthreadMutex);
+		cout << "Y5\n";
 		sem_post(&full);
+		cout << "Y6\n";
 	}
 	return nullptr;
 }
@@ -105,8 +117,11 @@ void* StartChefY (void* pVoid) {
 void* StartChefZ (void* pVoid) {
 	int i;
 	for(; GetExecutionTime() < kApproximatedExecutionTimeLimit;) {
+		cout << "Z1\n";
 		sem_wait(&full);
+		cout << "Z2\n";
 		pthread_mutex_lock(&pthreadMutex);
+		cout << "Z3\n";
 
 		sleep(kSleepingTimeAfterEachConsoleOutput);
 		char cake = production_queue.front();
@@ -119,8 +134,11 @@ void* StartChefZ (void* pVoid) {
 		}
 		//printf("Chef Z consumed cake %d\n", cake);
 
+		cout << "Z4\n";
 		pthread_mutex_unlock(&pthreadMutex);
+		cout << "Z5\n";
 		sem_post(&empty);
+		cout << "Z6\n";
 	}
 	return nullptr;
 }
