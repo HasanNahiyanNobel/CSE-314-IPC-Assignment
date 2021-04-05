@@ -170,6 +170,33 @@ IPC_Assignment/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IPC_Assignment.dir/build.make CMakeFiles/IPC_Assignment.dir/1405037.cpp.s
 .PHONY : 1405037.cpp.s
 
+Sample_Code.o: Sample_Code.cpp.o
+
+.PHONY : Sample_Code.o
+
+# target to build an object file
+Sample_Code.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IPC_Assignment.dir/build.make CMakeFiles/IPC_Assignment.dir/Sample_Code.cpp.o
+.PHONY : Sample_Code.cpp.o
+
+Sample_Code.i: Sample_Code.cpp.i
+
+.PHONY : Sample_Code.i
+
+# target to preprocess a source file
+Sample_Code.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IPC_Assignment.dir/build.make CMakeFiles/IPC_Assignment.dir/Sample_Code.cpp.i
+.PHONY : Sample_Code.cpp.i
+
+Sample_Code.s: Sample_Code.cpp.s
+
+.PHONY : Sample_Code.s
+
+# target to generate assembly for a file
+Sample_Code.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IPC_Assignment.dir/build.make CMakeFiles/IPC_Assignment.dir/Sample_Code.cpp.s
+.PHONY : Sample_Code.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -182,6 +209,9 @@ help:
 	@echo "... 1405037.o"
 	@echo "... 1405037.i"
 	@echo "... 1405037.s"
+	@echo "... Sample_Code.o"
+	@echo "... Sample_Code.i"
+	@echo "... Sample_Code.s"
 .PHONY : help
 
 

@@ -3,4 +3,4 @@ project(IPC_Assignment)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(IPC_Assignment 1405037.cpp)
+add_executable(IPC_Assignment 1405037.cpp "Sample Code.cpp")
