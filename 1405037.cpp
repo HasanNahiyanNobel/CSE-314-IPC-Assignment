@@ -97,14 +97,14 @@ void* StartChefX (void* pVoid) {
 		sem_wait(&empty_production_queue);
 		pthread_mutex_lock(&mutex_production_queue);
 
-		production_queue.push(kChocolateCakeChar);
-
 		pthread_mutex_lock(&mutex_print);
+
+		production_queue.push(kChocolateCakeChar);
 		cout << "Chef X produced a *chocolate* cake." << endl;
 		PrintAllQueues();
-		pthread_mutex_unlock(&mutex_print);
-
 		sleep(kSleepingTimeAfterEachConsoleOutput);
+
+		pthread_mutex_unlock(&mutex_print);
 
 		pthread_mutex_unlock(&mutex_production_queue);
 		sem_post(&full_production_queue);
@@ -117,14 +117,14 @@ void* StartChefY (void* pVoid) {
 		sem_wait(&empty_production_queue);
 		pthread_mutex_lock(&mutex_production_queue);
 
-		production_queue.push(kVanillaCakeChar);
-
 		pthread_mutex_lock(&mutex_print);
+
+		production_queue.push(kVanillaCakeChar);
 		cout << "Chef Y produced a *vanilla* cake." << endl;
 		PrintAllQueues();
-		pthread_mutex_unlock(&mutex_print);
-
 		sleep(kSleepingTimeAfterEachConsoleOutput);
+
+		pthread_mutex_unlock(&mutex_print);
 
 		pthread_mutex_unlock(&mutex_production_queue);
 		sem_post(&full_production_queue);
@@ -138,18 +138,18 @@ void* StartChefZ (void* pVoid) {
 		sem_wait(&full_production_queue);
 		pthread_mutex_lock(&mutex_production_queue);
 
+		pthread_mutex_lock(&mutex_print);
+
 		char cake = production_queue.front();
 		production_queue.pop();
-
 		string cake_name;
 		if (cake==kChocolateCakeChar) cake_name = "chocolate";
 		else cake_name = "vanilla";
-		pthread_mutex_lock(&mutex_print);
 		cout << "Chef Z took a *"<< cake_name <<"* cake from production queue." << endl;
 		PrintAllQueues();
-		pthread_mutex_unlock(&mutex_print);
-
 		sleep(kSleepingTimeAfterEachConsoleOutput);
+
+		pthread_mutex_unlock(&mutex_print);
 
 		pthread_mutex_unlock(&mutex_production_queue);
 		sem_post(&empty_production_queue);
@@ -159,14 +159,14 @@ void* StartChefZ (void* pVoid) {
 			sem_wait(&empty_chocolate_queue);
 			pthread_mutex_lock(&mutex_chocolate_queue);
 
-			chocolate_queue.push(cake);
-
 			pthread_mutex_lock(&mutex_print);
+
+			chocolate_queue.push(cake);
 			cout << "Chef Z decorated a *chocolate* cake." << endl;
 			PrintAllQueues();
-			pthread_mutex_unlock(&mutex_print);
-
 			sleep(kSleepingTimeAfterEachConsoleOutput);
+
+			pthread_mutex_unlock(&mutex_print);
 
 			pthread_mutex_unlock(&mutex_chocolate_queue);
 			sem_post(&full_chocolate_queue);
@@ -175,14 +175,14 @@ void* StartChefZ (void* pVoid) {
 			sem_wait(&empty_vanilla_queue);
 			pthread_mutex_lock(&mutex_vanilla_queue);
 
-			vanilla_queue.push(cake);
-
 			pthread_mutex_lock(&mutex_print);
+
+			vanilla_queue.push(cake);
 			cout << "Chef Z decorated a *vanilla* cake." << endl;
 			PrintAllQueues();
-			pthread_mutex_unlock(&mutex_print);
-
 			sleep(kSleepingTimeAfterEachConsoleOutput);
+
+			pthread_mutex_unlock(&mutex_print);
 
 			pthread_mutex_unlock(&mutex_vanilla_queue);
 			sem_post(&full_vanilla_queue);
