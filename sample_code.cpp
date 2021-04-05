@@ -11,6 +11,7 @@ using namespace std;
 
 /// Constants
 const int kProductionQueueSize = 5;
+const int kNumberOfProductions = 10;
 const char kChocolateCakeChar = 'c';
 const char kVanillaCakeChar = '-'; //TODO Change this to 'v'
 const int kSleepingTimeAfterEachConsoleOutput = 1; // In seconds
@@ -27,18 +28,21 @@ queue<int> production_queue;
 /// Function definitions
 void InitSemaphore();
 void* StartChefX(void* pVoid);
+void* StartChefY(void* pVoid);
 void* StartChefZ(void* pVoid);
 
 
 ///Main Function
 int main() {
-	pthread_t thread1;
-	pthread_t thread2;
+	pthread_t thread_chef_x;
+	pthread_t thread_chef_y;
+	pthread_t thread_chef_z;
 
 	InitSemaphore();
 
-	pthread_create(&thread1, nullptr, StartChefX, nullptr);
-	pthread_create(&thread2, nullptr, StartChefZ, nullptr);
+	pthread_create(&thread_chef_x, nullptr, StartChefX, nullptr);
+	pthread_create(&thread_chef_y, nullptr, StartChefY, nullptr);
+	pthread_create(&thread_chef_z, nullptr, StartChefZ, nullptr);
 
 	while(1);
 	return 0;
@@ -54,7 +58,7 @@ void InitSemaphore () {
 
 void* StartChefX (void* pVoid) {
 	int i;
-	for(i=1;i<=10;i++) {
+	for(i=0; i<kNumberOfProductions; i++) {
 		sem_wait(&empty);
 		pthread_mutex_lock(&pthreadMutex);
 
@@ -68,9 +72,25 @@ void* StartChefX (void* pVoid) {
 	return nullptr;
 }
 
+void* StartChefY (void* pVoid) {
+	int i;
+	for(i=0; i<kNumberOfProductions; i++) {
+		sem_wait(&empty);
+		pthread_mutex_lock(&pthreadMutex);
+
+		sleep(kSleepingTimeAfterEachConsoleOutput);
+		production_queue.push(i);
+		printf("Chef Y produced item %d\n",i);
+
+		pthread_mutex_unlock(&pthreadMutex);
+		sem_post(&full);
+	}
+	return nullptr;
+}
+
 void* StartChefZ (void* pVoid) {
 	int i;
-	for(i=1;i<=10;i++) {
+	for(i=0; i<kNumberOfProductions; i++) {
 		sem_wait(&full);
 		pthread_mutex_lock(&pthreadMutex);
 
