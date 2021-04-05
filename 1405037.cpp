@@ -58,16 +58,22 @@ int main() {
 	pthread_t thread_chef_x;
 	pthread_t thread_chef_y;
 	pthread_t thread_chef_z;
+	pthread_t thread_waiter_1;
+	pthread_t thread_waiter_2;
 
 	InitSemaphore();
 
 	pthread_create(&thread_chef_x, nullptr, StartChefX, nullptr);
 	pthread_create(&thread_chef_y, nullptr, StartChefY, nullptr);
 	pthread_create(&thread_chef_z, nullptr, StartChefZ, nullptr);
+	pthread_create(&thread_waiter_1, nullptr, StartWaiter1, nullptr);
+	pthread_create(&thread_waiter_2, nullptr, StartWaiter2, nullptr);
 
 	pthread_join(thread_chef_x, nullptr);
 	pthread_join(thread_chef_y, nullptr);
 	pthread_join(thread_chef_z, nullptr);
+	pthread_join(thread_waiter_1, nullptr);
+	pthread_join(thread_waiter_2, nullptr);
 
 	//while(1);
 
